@@ -124,43 +124,13 @@ function setToken(setTokenUrl) {
           cookieWidthToken = item
         }
       })
-      // let shopUrl = `${requestList.get('shop')}&shop_id=${shopId}&_=${new Date().getTime()}`
+
       let shopUrl = `${requestList.get('shop')}&shop_id=${shopId}&_=${new Date().getTime()}`
       return getAllMissingData(shopUrl, 1, cookieWidthToken)
     })
     .catch(lerr => {
       logError(log_path, 'getData at last step error', lerr)
     })
-  // request({
-  //   url: setTokenUrl,
-  //   headers: {
-  //     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
-  //   },
-  //   followRedirect: false,
-  //   followAllRedirects: false
-  // }, function (error, response, body) {
-  //   let cookieWidthToken = ''
-  //   let shopId = ''
-  //   response.headers.location.split('&').map(item => {
-  //     if (item.indexOf('shop_id') !== -1) {
-  //       shopId = item.split('=').pop()
-  //     }
-  //   })
-  //   response.headers['set-cookie'].map((item) => {
-  //     if (item.indexOf('token') !== -1) {
-  //       cookieWidthToken = item
-  //     }
-  //   })
-  //   let shopUrl = `${requestList.get('shop')}&page_index=${1}&shop_id=${shopId}&_=${new Date().getTime()}`
-  //   request({
-  //     url: shopUrl,
-  //     headers: {
-  //       cookie: cookieWidthToken
-  //     }
-  //   }, function (error, response, body) {
-  //     fs.writeFile('output.json', body)
-  //   })
-  // })
 }
 
 function buildHtml(req, uuid, state) {
