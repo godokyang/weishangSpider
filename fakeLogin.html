@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>模拟登录</title>
+  <style type="text/css">
+    html body {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      min-width: 400px;
+      min-height: 700px;
+    }
+
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-color: #333333;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .img-view {
+      width: 282px;
+      height: 282px;
+      margin: 20px;
+      background-color: white;
+    }
+
+    .bottom {
+      width: 280px;
+      height: 40px;
+      margin: 15px 0;
+      padding: 7px 14px;
+      text-align: center;
+      font-size: 13px;
+      border-radius: 50px;
+      background-color: #232323;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="title">微商相册数据抓取</div>
+    <div data-uuid="" data-dns="" data-state="" class="img-view"></div>
+    <div class="bottom">安安，用你的微信扫描一下<br>才能拿到数据，地瓜没能做到全自动化(°ー°〃)</div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript">
+    function createumuuid() {
+      function a() {
+        function c(w, v) {
+          var r, y = 0;
+          for (r = 0; r < v.length; r++)
+            y |= k[r] << 8 * r;
+          return w ^ y
+        }
+        var d = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36', f, k = [], n = 0;
+        for (f = 0; f < d.length; f++) {
+          var u = d.charCodeAt(f);
+          k.unshift(u & 255);
+          4 <= k.length && (n = c(n, k),
+            k = [])
+        }
+        0 < k.length && (n = c(n, k));
+        return n.toString(16)
+      }
+      function b() {
+        for (var c = 1 * new Date, d = 0; c == 1 * new Date;)
+          d++;
+        return c.toString(16) + d.toString(16)
+      }
+      return function () {
+        var c = (window.screen.width * window.screen.height).toString(16);
+        return b() + "-" + Math.random().toString(16).replace(".", "") + "-" + a() + "-" + c + "-" + b()
+      }
+    }
+
+    !function a() {
+      function run() {
+        var uuid = $('.img-view').attr('data-uuid')
+        var state = $('.img-view').attr('data-state')
+        var nmuuid = createumuuid()()
+        // var dns = $('.img-view').attr('data-dns')
+        jQuery.ajax({
+          type: "GET",
+          url: `https://lp.open.weixin.qq.com/connect/l/qrconnect?uuid=${uuid}&_=${new Date().getTime()}`,
+          dataType: "script", //这里是script类型
+          cache: !1,
+          timeout: 6e4,
+          success: function (a, e, f) {
+            var g = window.wx_errcode;//这里为什么是window.wx_errcode呢 因为返回的格式是script 内容是 window.wx_errcode=408;window.wx_code='';
+            switch (g) {
+              case 405://如果是405证明用户已经同意授权登录 用js重定向并带上code
+                var dns = "https://www.szwego.com/service/mp/pc_login_auth.jsp";
+                dns = dns.replace(/&amp;/g, "&"), dns += (dns.indexOf("?") > -1 ? "&" : "?") + "code=" + wx_code + "&state=" + state;
+                // jQuery.post(`http://localhost:7000/scanComplate?nmuuid=${nmuuid}`, { url: dns })
+                jQuery.ajax({
+                  type: 'POST',
+                  url: `http://localhost:7000/scanComplate?nmuuid=${nmuuid}`,
+                  data: { url: dns },
+                  success: function(res) {
+                    $('body').html(res) 
+                  }
+                });
+                // window.location = dns;
+                break;
+              case 404:
+                setTimeout(run, 100, g);
+                break;
+              case 403:
+                setTimeout(run, 2e3, g);
+                break;
+              case 402:
+              case 500:
+                window.location.reload();
+                break;
+              case 408:
+                setTimeout(a, 2e3)
+            }
+          },
+          error: function (b, c, d) {
+            var e = window.wx_errcode;
+            408 == e ? setTimeout(run, 5e3) : setTimeout(run, 5e3, e)
+          }
+        })
+      }
+      setTimeout(() => {
+        run()
+      }, 100);
+    }()
+  </script>
+</body>
+
+</html>

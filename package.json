@@ -1,0 +1,17 @@
+{
+  "name": "weshangspider",
+  "version": "1.0.0",
+  "description": "微商相册爬虫",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "godokyang",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "iconv-lite": "^0.5.0",
+    "mime": "^2.4.4",
+    "request": "^2.88.0"
+  }
+}
