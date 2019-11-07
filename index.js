@@ -225,7 +225,10 @@ function getRunningFlag(r) {
     spiderFlag = list[list.length - 1].time_stamp < rejectTime
   }
   console.log(list[list.length - 1].time_stamp, rejectTime, list[list.length - 1].time_stamp < rejectTime)
-  fs.writeFileSync('log_goods_id', list[list.length - 1].goods_id)
+  if (spiderFlag || log_goods_id === null) {
+    fs.writeFileSync('log_goods_id', list[0].goods_id)
+  }
+  
   if (list.length > 0) {
     writeProToDB(list)
   }
