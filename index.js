@@ -258,11 +258,11 @@ function logError(path, title, log) {
     if (exists) {
       fs.appendFileSync(path, `${title}: Date: ${new Date()}`)
       fs.appendFileSync(path, '\r\n')
-      fs.appendFileSync(path, log)
+      fs.appendFileSync(path, JSON.stringify(log))
       fs.appendFileSync(path, '\r\n')
       fs.appendFileSync(path, '\r\n')
     } else {
-      fs.writeFileSync(path, `${title}: Date: ${new Date()}\r\n\r\n${log}\r\n\r\n`)
+      fs.writeFileSync(path, `${title}: Date: ${new Date()}\r\n\r\n${JSON.stringify(log)}\r\n\r\n`)
     }
   })
 
@@ -270,8 +270,8 @@ function logError(path, title, log) {
 
 function writeProToDB(list) {
   let sql = list.reduce((result, item, index,arr) => {
-    return `${result}("${iv.encode(iGetInnerText(item.title), 'utf8')}","${item.videoURL || item.videoUrl}","${item.imgsSrc.toString()}","${item.goods_id}",${item.time_stamp},"${item.shop_id}")${index===(arr.length - 1) ? ';' : ','}`
-  }, 'INSERT INTO ChenAnDB_goods (goods_name, video,images,owner_goods_id,owner_server_time,owner_shop_id) VALUES')
+    return `${result}("${iv.encode(iGetInnerText(item.title), 'utf8')}","${item.videoURL || item.videoUrl}","${item.imgsSrc.toString()}","${item.goods_id}",${item.time_stamp},"${item.shop_id}","${new Date().getTime()}")${index===(arr.length - 1) ? ';' : ','}`
+  }, 'INSERT INTO ChenAnDB_goods (goods_name, video,images,owner_goods_id,owner_server_time,owner_shop_id,catch_time) VALUES')
   connection.query(sql, function (error, results, fields) {
     logError(log_path, 'Save Data result:', `${new Date()}${error}\r\n${results}`)
   })
